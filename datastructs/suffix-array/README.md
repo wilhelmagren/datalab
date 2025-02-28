@@ -50,4 +50,38 @@ smaller than any other character. The text has the following suffixes:
 |a$|6|
 |$|7|
 
+These suffixes can be sorted in ascending (alphabetical) order:
+
+|**Suffix**|**i**|
+|--|--|
+|$|7|
+|a$|6|
+|ana$|4|
+|anana$|2|
+|banana$|1|
+|na$|5|
+|nana$|3|
+
+The suffix array $A$ contains the starting positions of these sorted suffixes:
+
+|**i=**|1|2|3|4|5|6|7|
+|--|--|--|--|--|--|--|--|
+|$A\[i\]$**=**|7|6|4|2|1|5|3|
+
+And the suffix array with the suffixes written out vertically underneath for clarity:
+
+|**i=**|1|2|3|4|5|6|7|
+|--|--|--|--|--|--|--|--|
+|$A\[i\]$**=**|7|6|4|2|1|5|3|
+|1|$|a|a|a|b|n|n|
+|2| |$|n|n|a|a|a|
+|3| | |a|a|n|$|n|
+|4| | |$|n|a| |a|
+|5| | | |$|n| |$|
+|6| | | |||a| | |
+|7| | | | |$| | |
+
+So for example, $A\[3\]=4$, and therefore refers to the suffix starting at position 4
+within $S$, which is the suffix `ana$`.
+
 
