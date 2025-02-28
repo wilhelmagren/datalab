@@ -78,7 +78,7 @@ And the suffix array with the suffixes written out vertically underneath for cla
 |3| | |a|a|n|$|n|
 |4| | |$|n|a| |a|
 |5| | | |$|n| |$|
-|6| | | |||a| | |
+|6| | | | |a| | |
 |7| | | | |$| | |
 
 So for example, $A\[3\]=4$, and therefore refers to the suffix starting at position 4
