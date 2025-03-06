@@ -8,3 +8,6 @@ torchmetrics
 torchinfo
 torchvision
 torch
+psutil
+pynvml
+pyrsmi

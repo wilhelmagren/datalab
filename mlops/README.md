@@ -115,3 +115,27 @@ assert response.text == mlflow.__version__
 
 ```
 
+
+### MLflow System Metrics
+
+MLflow allows users to log system metrics including CPU stats, GPU stats, memory usage,
+network traffic, and disk usage during execution of an MLflow run. To log metrics, install
+`psutil` (for CPU) and `pynvml` (for GPU) with:
+
+```
+py -m pip install psutil
+py -m pip install pynvml
+```
+
+There are three ways to enable or disable system metrics logging:
+
+- set the environment variable `MLFLOW_ENABLE_SYSTEM_METRICS_LOGGING` to either `true` or
+  `false`,
+- use the `mlflow.enable_system_metrics_logging()` method to enable logging and the
+  `mlflow.disable_system_metrics_logging()` to disable logging of system metrics,
+- use the `log_system_metrics` parameter in the `mlflow.start_run()` method to control
+  system metrics logging for the **current** MLflow run.
+
+You can view the system metrics within the MLflow UI that your Tracking Server exposes in
+the same place as you would see your ML metrics.
+
