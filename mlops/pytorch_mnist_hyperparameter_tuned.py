@@ -1,5 +1,6 @@
 """
 Traing a CNN on the MNIST Fashion dataset with MLflow experiment tracking.
+Performs grid search on a number of hyperparameters.
 
 File created: 2025-03-06
 Last updated: 2025-03-06
@@ -10,6 +11,7 @@ import mlflow
 import torch
 import torch.nn as nn
 
+from itertools import product
 from torch.utils.data import (
     DataLoader,
     Dataset,
@@ -21,6 +23,7 @@ from torchmetrics import (
 )
 from torchvision import datasets
 from torchvision.transforms import ToTensor
+from typing import List
 
 
 class CoolNet(nn.Module):
@@ -135,18 +138,6 @@ if __name__ == "__main__":
         "--epochs", default=10, type=int, help="The number of epochs to train for"
     )
     parser.add_argument(
-        "--batch-size", default=64, type=int,
-        help="The batch size to use for training and evaluation",
-    )
-    parser.add_argument(
-        "--lr", default=3e-4, type=float,
-        help="The learning rate to use for training",
-    )
-    parser.add_argument(
-        "--dropout-p", default=0.2, type=float,
-        help="The dropout layer probability to use for training",
-    )
-    parser.add_argument(
         "--run", type=str, help="The run identifier for the MLflow experiment",
     )
 
@@ -174,10 +165,10 @@ if __name__ == "__main__":
     print(f"Size of training dataset: {len(train_data)}")
     print(f"Size of testing dataset: {len(test_data)}")
 
-    batch_size: int = args.batch_size
+    batch_sizes: List[int] = [8, 32, 64]
+    lrs: List[float] = [1e-2, 1e-3, 1e-4]
+    dropouts: List[float] = [0.0, 0.3, 0.6]
 
-    train_loader: DataLoader = DataLoader(train_data, shuffle=True, batch_size=batch_size)
-    test_loader: DataLoader = DataLoader(test_data, shuffle=False, batch_size=batch_size)
 
     experiment_run: str = args.run
 
@@ -185,39 +176,49 @@ if __name__ == "__main__":
     mlflow.set_experiment("pytorch-mnist-coolnet")
 
     epochs: int = args.epochs
-    lr: float = args.lr
-    dropout_p: float = args.dropout_p
-
-    model: nn.Module = CoolNet(n_classes=10, dropout_p=dropout_p).to(device)
-    loss_fn: nn.Module = nn.CrossEntropyLoss()
-    metrics_fn: Metric = Accuracy(task="multiclass", num_classes=10).to(device)
-    optimizer: torch.optim.Optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 
     with mlflow.start_run(run_name=args.run):
-        params = {
-            "epochs": epochs,
-            "learning_rate": lr,
-            "batch_size": batch_size,
-            "loss_fn": loss_fn.__class__.__name__,
-            "metrics_fn": metrics_fn.__class__.__name__,
-            "optimizer": optimizer.__class__.__name__,
-        }
+        for (bs, lr, dp) in product(batch_sizes, lrs, dropouts):
+            child_run_name = f"bs_{bs}-lr_{lr}-dp_{dp}"
+            with mlflow.start_run(run_name=child_run_name, nested=True):
 
-        mlflow.log_params(params)
+                train_loader: DataLoader = DataLoader(
+                    train_data, shuffle=True, batch_size=bs,
+                )
+                test_loader: DataLoader = DataLoader(
+                    test_data, shuffle=False, batch_size=bs,
+                )
 
-        with open("model_summary.txt", "w") as f:
-            f.write(str(summary(model)))
+                model: nn.Module = CoolNet(n_classes=10, dropout_p=dp).to(device)
+                loss_fn: nn.Module = nn.CrossEntropyLoss()
+                metrics_fn: Metric = Accuracy(task="multiclass", num_classes=10).to(device)
+                optimizer: torch.optim.Optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 
-        mlflow.log_artifact("model_summary.txt")
+                params = {
+                    "epochs": epochs,
+                    "learning_rate": lr,
+                    "batch_size": bs,
+                    "dropout": dp,
+                    "loss_fn": loss_fn.__class__.__name__,
+                    "metrics_fn": metrics_fn.__class__.__name__,
+                    "optimizer": optimizer.__class__.__name__,
+                }
 
-        # Evaluate the model before training to get "baseline"
-        evaluate(test_loader, model, device, loss_fn, metrics_fn, epoch=0)
+                mlflow.log_params(params)
 
-        for epoch in range(epochs + 1):
-            print(f" =========== Epoch {epoch} ===========")
+                with open("model_summary.txt", "w") as f:
+                    f.write(str(summary(model)))
 
-            train(train_loader, model, device, loss_fn, metrics_fn, optimizer, epoch=epoch)
-            evaluate(test_loader, model, device, loss_fn, metrics_fn, epoch=epoch)
+                mlflow.log_artifact("model_summary.txt")
 
-        mlflow.pytorch.log_model(model, "coolnet")
+                # Evaluate the model before training to get "baseline"
+                evaluate(test_loader, model, device, loss_fn, metrics_fn, epoch=0)
+
+                for epoch in range(epochs + 1):
+                    print(f" =========== Epoch {epoch} ===========")
+
+                    train(train_loader, model, device, loss_fn, metrics_fn, optimizer, epoch=epoch)
+                    evaluate(test_loader, model, device, loss_fn, metrics_fn, epoch=epoch)
+
+                mlflow.pytorch.log_model(model, "coolnet" + child_run_name)
 
