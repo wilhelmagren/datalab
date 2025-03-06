@@ -139,3 +139,72 @@ There are three ways to enable or disable system metrics logging:
 You can view the system metrics within the MLflow UI that your Tracking Server exposes in
 the same place as you would see your ML metrics.
 
+
+### MLflow Model and Deployment
+
+**MLflow Model** is a standard format that packages a machine learning model with its
+metadata, such as dependencies and inference schema. You typically create a model as a
+result of a training execution using the Tracking APIs. To use MLflow deployment, you must
+first create a model.
+
+MLflow uses Docker containers to package models with their dependencies, enabling
+deployment to various destinations without environment compatibility issues. 
+
+MLflow allows you to deploy your model locally using the cli. But before deploying, you
+must have an MLflow Model, when you have that you can use the following command to deploy
+your model for inference:
+
+```
+mlflow models serve -m runs:/<run-id>/model -p 5000
+```
+
+which starts a local server that listens on the specified port and serves your model. You
+can then invoke your model for inference with:
+
+```
+curl http://127.0.0.1:5000/invocations -H "Content-Type:application/json"  --data '{"inputs": [[1, 2], [3, 4], [5, 6]]}'
+```
+
+The inference server provides 4 endpoints:
+
+- `/invocations`: an inference endpoint that accepts `POST` requests with input data and
+  returns predictions,
+- `/ping`: used for health checks,
+- `/health`: same as `/ping`,
+- `/version`: returns the MLflow version running on the inference server.
+
+The `/invocations` endpoint accepts either CSV or JSON input and the input format must be
+specified in the `Content-Type` header as either `application/csv` or `application/json`.
+
+MLflow uses FastAPI by default for serving the model on the inference server.
+
+You can execute a single batch inference job on local files using the following command:
+
+```
+mlflow models predict -m runs:/<run-id>/model -i input.csv -o output.csv
+```
+
+To automatically register your model in the Model Registry you need to add the following
+fields to your `.log_model()` code:
+
+```python
+...
+
+mlflow.sklearn.log_model(
+    sk_model=model,
+    artifact_path="sklearn-model",
+    signature=signature,
+    registered_model_name="sk-learn-random-forest-reg-model",
+)
+
+```
+
+or you can register the model **after** the experiment is done with:
+
+```python
+result = mlflow.register_model(
+    "runs:/abcdefghijklmnopqrstuvwxyz1234567890/sklearn-model",
+    "sk-learn-random-forest-reg-model",
+)
+
+```
