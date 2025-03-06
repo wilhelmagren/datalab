@@ -7,9 +7,14 @@ Last updated: 2025-03-06
 
 import argparse
 import mlflow
+import numpy as np
 import torch
 import torch.nn as nn
 
+from mlflow.models.signature import (
+    infer_signature,
+    ModelSignature,
+)
 from torch.utils.data import (
     DataLoader,
     Dataset,
@@ -213,11 +218,18 @@ if __name__ == "__main__":
         # Evaluate the model before training to get "baseline"
         evaluate(test_loader, model, device, loss_fn, metrics_fn, epoch=0)
 
-        for epoch in range(epochs + 1):
+        for epoch in range(1, epochs + 1):
             print(f" =========== Epoch {epoch} ===========")
 
             train(train_loader, model, device, loss_fn, metrics_fn, optimizer, epoch=epoch)
             evaluate(test_loader, model, device, loss_fn, metrics_fn, epoch=epoch)
 
-        mlflow.pytorch.log_model(model, "coolnet")
+        with torch.no_grad():
+            input_example: np.ndarray = train_data[0][0].unsqueeze(0).cpu().numpy()
+            model_signature: ModelSignature = infer_signature(
+                input_example,
+                model(train_data[0][0].unsqueeze(0)).cpu().numpy(),
+            )
+
+            mlflow.pytorch.log_model(model, "coolnet", signature=model_signature, input_example=input_example)
 
