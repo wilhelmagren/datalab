@@ -173,3 +173,5 @@ cython_debug/
 data/
 mlartifacts/
 mlruns/
+
+*.gz
