@@ -35,7 +35,6 @@ The driver program divides the job into multiple tasks - split on the worker nod
 - Partitioning
     - Distribute data to the cluster.
 
-
 Spark jobs are divided into stages and each stage can have an arbitrary
 amount of tasks.
 
