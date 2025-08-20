@@ -1,7 +1,8 @@
 <div align="center">
 
-# Apache Spark
-##### Unified engine for large-scale data analytics
+<img width="400" height="400" alt="image" src="https://github.com/user-attachments/assets/a70f5f7a-a510-42d5-89f2-ff809d324269" />
+
+#### Unified engine for large-scale data analytics
 
 </div>
 
