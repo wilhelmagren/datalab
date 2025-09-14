@@ -36,3 +36,8 @@ cur.close()
 conn.close()
 
 ```
+
+## LINKS
+
+good article on polars + duckdb writing to postgres
+https://aklaver.org/wordpress/2024/03/08/using-polars-duckdb-with-postgres/
