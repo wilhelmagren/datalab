@@ -1,5 +1,7 @@
 ## reading .jsonl files in Python fast
 
+> POLARS ABOUT 2.5x faster on average (magniture increases as file sizes increases)
+
 Hardware:
 
 - Kernel: Linux 6.12.39-1-MANJARO
