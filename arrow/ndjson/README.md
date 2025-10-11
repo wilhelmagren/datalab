@@ -1,6 +1,8 @@
 ## reading .jsonl files in Python fast
 
-> POLARS ABOUT 2.5x faster on average (magniture increases as file sizes increases)
+> POLARS ABOUT 2.5x faster on average (speedup magnitude increases as file sizes increases)
+
+![speedupbench](speedup3.png)
 
 Hardware:
 
