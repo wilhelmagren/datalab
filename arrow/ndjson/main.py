@@ -34,7 +34,7 @@ def json_schema_to_pandas(schema):
 
 
 def main():
-    with open("example-schema.json", "rb") as f:
+    with open("example-schema2.json", "rb") as f:
         schema = json.load(f)
 
     polars_schema = json_schema_to_polars(schema)

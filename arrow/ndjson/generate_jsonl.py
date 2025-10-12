@@ -17,13 +17,7 @@ def main() -> None:
         100000,
         200000,
         500000,
-        int(1e6),
-        int(5e6),
-        int(1e7),
-        int(5e7),
-        int(1e8),
-        int(5e8),
-        int(1e9),
+        1000000,
     ]
 
     data = {
@@ -31,6 +25,10 @@ def main() -> None:
         "username": "dev0rce",
         "last_login": datetime.now().isoformat(),
         "banned": False,
+        "friends": [
+            {"user_id": 14, "username": "foo", "since": datetime.now().isoformat()},
+            {"user_id": 9814455, "username": "bar"},
+        ],
     }
 
     for rows in tqdm(rowset, desc="Generating files"):
