@@ -1,4 +1,5 @@
 import orjson
+import json
 import polars as pl
 import pyarrow as pa
 
@@ -44,6 +45,8 @@ def main() -> None:
         schema=schema,
     )
 
+    print(df.head())
+
     friends_struct = pa.large_list(
         pa.struct(
             [
@@ -87,7 +90,10 @@ def main() -> None:
     df = df.with_columns(
         [
             pl.col("friends")
-            .map_elements(orjson.dumps, return_dtype=pl.Binary)
+            .map_elements(
+                lambda s: s.str,
+                return_dtype=pl.Binary,
+            )
             .alias("friends_bin")
         ]
     )
