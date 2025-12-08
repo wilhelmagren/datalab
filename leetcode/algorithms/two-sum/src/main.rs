@@ -16,6 +16,10 @@ use std::collections::HashMap;
 /// is equal to the target. We can return out early because there
 /// will only be one solution.
 ///
+/// # Comlexity analysis
+///  - Time: `O(n)` assuming hashmap operations `O(1)`.
+///  - Space: `O(n)` for the extra hashmap.
+///
 /// # Performance
 ///  - Runtime: 0ms | beats 100.0%
 ///  - Memory: 2.54 MB | Beats 22.43%
