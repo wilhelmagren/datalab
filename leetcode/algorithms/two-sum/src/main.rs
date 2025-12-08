@@ -21,13 +21,13 @@ use std::collections::HashMap;
 ///  - Space: `O(n)` for the extra hashmap.
 ///
 /// # Performance
-///  - Runtime: 0ms | beats 100.0%
+///  - Runtime: 0 ms | Beats 100.0%
 ///  - Memory: 2.54 MB | Beats 22.43%
 fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
     let mut map = HashMap::new();
     map.insert(nums[0], 0);
 
-    for (i, n) in nums[1..].into_iter().enumerate() {
+    for (i, n) in nums[1..].iter().enumerate() {
         let diff = target - n;
         if let Some(j) = map.get(&diff) {
             return vec![(i + 1) as i32, *j];

@@ -20,15 +20,15 @@ type LinkedList = Option<Box<ListNode>>;
 /// You may assume the two numbers do not contain any leading zero, except the number 0 itself.
 ///
 /// # Examples
-///  - Input: l1 = [2,4,3], l2 = [5,6,4]
-///  - Output: [7,0,8]
-///  - Why? 342 + 465 = 807
+/// Input: l1 = [2,4,3], l2 = [5,6,4]
+/// Output: [7,0,8]
+/// Why? 342 + 465 = 807
 ///
-///  - Input: l1 = [0], l2 = [0]
-///  - Output: [0]
+/// Input: l1 = [0], l2 = [0]
+/// Output: [0]
 ///
-///  - Input: l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]
-///  - Output: [8,9,9,9,0,0,0,1]
+/// Input: l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]
+/// Output: [8,9,9,9,0,0,0,1]
 ///
 /// # Solution
 /// Go through the ListNode's in pairs and add each number. Keep track
@@ -43,7 +43,7 @@ type LinkedList = Option<Box<ListNode>>;
 ///  - Space: `O(k)` because we build a new resulting linked list.
 ///
 /// # Performance
-///  - Runtime: 0ms | Beats 100.0%
+///  - Runtime: 0 ms | Beats 100.00%
 ///  - Memory: 2.17 MiB | Beats 94.99%
 fn add_two_numbers(l1: LinkedList, l2: LinkedList) -> LinkedList {
     let mut l1 = l1;
